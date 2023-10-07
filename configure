@@ -776,6 +776,7 @@ if [ $WITH_STATIC = 1 ]; then
       else
         UNDERSCORE=1
         echo
+        echo '$LIBS'
         echo '    WARNING: static BLAS libirary did not work, executables will not build (errors for a few configurations below),'
         testlink "$LIB_PATH $LIBS" dgemm_ 1
         testlink "$LIB_PATH $LIBS" dgemm 1
