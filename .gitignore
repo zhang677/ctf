@@ -13,3 +13,5 @@ setup.py
 how-did-i-configure
 .*.swp
 .*.swo
+
+*.mtx

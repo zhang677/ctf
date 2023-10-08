@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
 #undef INT_ARG
 #undef STRING_ARG
   }
-  auto dimsStr = split(tensorDims, ",", false /* keepDelim */);
+  auto dimsStr = split(tensorDims, "_", false /* keepDelim */);
   std::vector<int> dims;
   for (auto it : dimsStr) {
     dims.push_back(atoi(it.c_str()));

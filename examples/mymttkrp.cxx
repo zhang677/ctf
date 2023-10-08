@@ -68,10 +68,10 @@ void mttkrp(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, s
   // transposed matrices.
   // i: dim[0]; k: dim[1]; l: dim[2]; j: ldim
   int K = dims[0], L = dims[1], I = dims[2], J = ldim;
-  int dimA[2] = {I, J};
-  int dimB[3] = {K, L, I};
-  int dimC[2] = {K, J};
-  int dimD[2] = {L, J};
+  int dimA[2] = {I, J}; // 28818,32
+  int dimB[3] = {K, L, I}; // 12092,9184,28818
+  int dimC[2] = {K, J}; // 12092,32
+  int dimD[2] = {L, J}; // 9184,32
   Tensor<double> B(3, true /* is_sparse */, dimB, dw, Ring<double>(), "B");
   Tensor<double> A(2, true, dimA, dw, Ring<double>(), "A");
   Tensor<double> C(2, true, dimC, dw, Ring<double>(), "C");
@@ -86,7 +86,13 @@ void mttkrp(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, s
     // A["ji"] = B["ikl"] * C["jk"] * D["jl"];
     A["ij"] = B["kli"] * C["kj"] * D["lj"];
   });
-
+  std::cout << "A: (" << dimA[0] << "," << dimA[1] << "): " << A.nnz_tot << std::endl;
+  std::cout << "B: (" << dimB[0] << "," << dimB[1] << "," << dimB[2] << "): " << B.nnz_tot << std::endl;
+  std::cout << "C: (" << dimC[0] << "," << dimC[1] << "): " << C.nnz_tot<< std::endl;
+  std::cout << "D: (" << dimD[0] << "," << dimD[1] << "): " << D.nnz_tot << std::endl;
+  C.write_sparse_to_file("C.mtx"); 
+  D.write_sparse_to_file("D.mtx");
+  A.write_sparse_to_file("A.mtx");
   if (dw.rank == 0) {
     std::cout << "Average execution time: " << avgMs << " ms." << std::endl;
   }
@@ -114,6 +120,7 @@ int main(int argc, char** argv) {
 #undef INT_ARG
 #undef STRING_ARG
   }
+  srand(42);
   auto dimsStr = split(tensorDims, ",", false /* keepDelim */);
   std::vector<int> dims;
   for (auto it : dimsStr) {
