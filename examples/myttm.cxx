@@ -35,11 +35,7 @@ std::vector<std::string> split(const std::string &str, const std::string &delim,
   return results;
 }
 
-void ttm(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std::string filename1) {
-  double sp_frac = 0.1;
-  // These look backwards because the MTTKRP built-in routine operates on
-  // transposed matrices.
-  // i: dim[0]; k: dim[1]; l: dim[2]; j: ldim
+void ttm_check(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std::string filename1, std::string filename2, std::string filename3) {
   int K = dims[0], I = dims[1], J = dims[2], L = ldim;
   int dimA[3] = {I, J, L};
   int dimB[3] = {K, I, J};
@@ -47,22 +43,46 @@ void ttm(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std:
   Tensor<double> B(3, true /* is_sparse */, dimB, dw, Ring<double>(), "B");
   Tensor<double> A(3, true, dimA, dw, Ring<double>(), "A");
   Tensor<double> C(2, true, dimC, dw, Ring<double>(), "C");
-  // B.fill_sp_random(-1.,1.,sp_frac);
   B.read_sparse_from_file(filename1.c_str());
-  C.fill_sp_random(-1.,1.,sp_frac);
+  std::cout << "Reading C from file..." << std::endl;
+  C.read_sparse_from_file(filename2.c_str()); // "/home/zgh23/code/ctf/C.txt"
+
+
+  A["ijl"] = B["kij"] * C["kl"];
+
+  std::cout << "A: (" << dimA[0] << "," << dimA[1] << "," << dimA[2] << "): " << A.nnz_tot << std::endl;
+  std::cout << "B: (" << dimB[0] << "," << dimB[1] << "," << dimB[2] << "): " << B.nnz_tot << std::endl;
+  std::cout << "C: (" << dimC[0] << "," << dimC[1] << "): " << C.nnz_tot<< std::endl;
+  
+  if (dw.rank == 0) {
+    std::cout << "Writing to: " << filename3 << std::endl;
+    A.write_sparse_to_file(filename3.c_str()); // "/home/zgh23/code/ctf/ttm-A.txt"
+  }
+}
+
+void ttm_bench(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std::string filename1, std::string filename2, std::string filename3) {
+  int K = dims[0], I = dims[1], J = dims[2], L = ldim;
+  int dimA[3] = {I, J, L};
+  int dimB[3] = {K, I, J};
+  int dimC[2] = {K, L};
+  Tensor<double> B(3, true /* is_sparse */, dimB, dw, Ring<double>(), "B");
+  Tensor<double> A(3, true, dimA, dw, Ring<double>(), "A");
+  Tensor<double> C(2, true, dimC, dw, Ring<double>(), "C");
+  B.read_sparse_from_file(filename1.c_str());
+  C.read_sparse_from_file(filename2.c_str()); 
 
   auto avgMs = benchmarkWithWarmup(warmup, nIter, [&]() {
     A["ijl"] = B["kij"] * C["kl"];
   });
-
+  auto nameStr = split(filename1, "/", false /* keepDelim */);
   if (dw.rank == 0) {
-    std::cout << "Average execution time: " << avgMs << " ms." << std::endl;
+    std::cout << nameStr[nameStr.size()-1] << "," << ldim << "," << "Average execution time: " << avgMs << " ms." << std::endl;
   }
 }
 
 int main(int argc, char** argv) {
-  int nIter = 20, warmup = 5, ttmLDim = 32;
-  std::string tensorDims = "100,101,102", filename1;
+  int nIter = 20, warmup = 5, ttmLDim = 32, mode = 0;
+  std::string tensorDims = "100,101,102", filename1, filename2, filename3;
   for (int i = 1; i < argc; i++) {
 #define INT_ARG(argname, varname) do {      \
           if (!strcmp(argv[i], (argname))) {  \
@@ -76,13 +96,17 @@ int main(int argc, char** argv) {
           } } while(0);
     INT_ARG("-iter", nIter);
     INT_ARG("-warmup", warmup);
-    INT_ARG("-LDim", ttmLDim);
+    INT_ARG("-ttmLDim", ttmLDim);
     STRING_ARG("-dims", tensorDims);
     STRING_ARG("-tensor", filename1);
+    STRING_ARG("-matrixC", filename2);
+    STRING_ARG("-matrixA", filename3);
+    INT_ARG("-mode", mode);
 #undef INT_ARG
 #undef STRING_ARG
   }
-  auto dimsStr = split(tensorDims, "_", false /* keepDelim */);
+  srand(42);
+  auto dimsStr = split(tensorDims, ",", false /* keepDelim */);
   std::vector<int> dims;
   for (auto it : dimsStr) {
     dims.push_back(atoi(it.c_str()));
@@ -92,7 +116,11 @@ int main(int argc, char** argv) {
   MPI_Comm_size(MPI_COMM_WORLD, &np);
   World dw;
   int retVal = 0;
-  ttm(nIter, warmup, dims, dw, ttmLDim, filename1);
+  if (mode == 0) {
+    ttm_check(nIter, warmup, dims, dw, ttmLDim, filename1, filename2, filename3);
+  } else if (mode == 1) {
+    ttm_bench(nIter, warmup, dims, dw, ttmLDim, filename1, filename2, filename3);
+  } 
   MPI_Finalize();
   return retVal;
 }

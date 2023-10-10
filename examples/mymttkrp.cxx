@@ -98,7 +98,7 @@ void mttkrp_gen(int nIter, int warmup, std::vector<int> dims, World& dw, int ldi
   }
 }
 
-void mttkrp_check(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std::string filename1, std::string filename2, std::string filename3) {
+void mttkrp_check(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std::string filename1, std::string filename2, std::string filename3, std::string filename4) {
   // These look backwards because the MTTKRP built-in routine operates on
   // transposed matrices.
   // i: dim[0]; k: dim[1]; l: dim[2]; j: ldim
@@ -155,8 +155,9 @@ void mttkrp_bench(int nIter, int warmup, std::vector<int> dims, World& dw, int l
     // A["ji"] = B["ikl"] * C["jk"] * D["jl"];
     A["ij"] = B["kli"] * C["kj"] * D["lj"];
   });
+  auto nameStr = split(filename1, "/", false /* keepDelim */);
   if (dw.rank == 0) {
-    std::cout << "Average execution time: " << avgMs << " ms." << std::endl;
+    std::cout << nameStr[nameStr.size()-1] << "," << ldim << "," << "Average execution time: " << avgMs << " ms." << std::endl;
   }
 }
 
@@ -200,7 +201,7 @@ int main(int argc, char** argv) {
   if (mode == 0) {
     mttkrp_gen(nIter, warmup, dims, dw, mttkrpLDim, filename1, filename2, filename3, filename4);
   } else if (mode == 1) {
-    mttkrp_check(nIter, warmup, dims, dw, mttkrpLDim, filename1, filename2, filename3);
+    mttkrp_check(nIter, warmup, dims, dw, mttkrpLDim, filename1, filename2, filename3, filename4);
   } else {
     mttkrp_bench(nIter, warmup, dims, dw, mttkrpLDim, filename1, filename2, filename3);
   }

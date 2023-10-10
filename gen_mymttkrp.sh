@@ -3,11 +3,11 @@ K=12092
 L=9184
 I=28818
 J=32
-Aname="/home/zgh23/code/ctf/A.mtx"
-Dname="/home/zgh23/code/ctf/D.mtx"
-Cname="/home/zgh23/code/ctf/C.mtx"
+Aname="/home/zgh23/code/ctf/A-nell-2-32.mtx"
+Dname="/home/zgh23/code/ctf/D-nell-2-32.mtx"
+Cname="/home/zgh23/code/ctf/C-nell-2-32.mtx"
 Bname="/scratch/zgh23/sparse_ten/nell-2-zero.tns"
-mpirun -n 1 ./bin/mymttkrp -tensor $Bname -dims $K,$L,$I -iter 2 -warmup 1 -mttkrpLDim $J -mode 0 -matrixA $Aname -matrixD $Dname -matrixC $Cname
+mpirun -n 1 ./bin/mymttkrp -tensor $Bname -dims $K,$L,$I -iter 1 -warmup 1 -mttkrpLDim $J -mode 0 -matrixA $Aname -matrixD $Dname -matrixC $Cname
 # TODO: Add mtx formating
 # Replace .mtx with .txt in Aname
 Atxt="${Aname%.*}.txt"
