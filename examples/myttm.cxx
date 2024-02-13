@@ -60,7 +60,7 @@ void ttm_check(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim
   }
 }
 
-void ttm_bench(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std::string filename1, std::string filename2, std::string filename3) {
+void ttm_bench(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim, std::string filename1, std::string filename2, std::string filename3, std::string resultname) {
   int K = dims[0], I = dims[1], J = dims[2], L = ldim;
   int dimA[3] = {I, J, L};
   int dimB[3] = {K, I, J};
@@ -77,12 +77,15 @@ void ttm_bench(int nIter, int warmup, std::vector<int> dims, World& dw, int ldim
   auto nameStr = split(filename1, "/", false /* keepDelim */);
   if (dw.rank == 0) {
     std::cout << nameStr[nameStr.size()-1] << "," << ldim << "," << "Average execution time: " << avgMs << " ms." << std::endl;
+    std::ofstream outfile;
+    outfile.open(resultname, std::ios_base::app);
+    outfile <<  nameStr[nameStr.size()-1] << "," << ldim << "," << avgMs << std::endl;
   }
 }
 
 int main(int argc, char** argv) {
   int nIter = 20, warmup = 5, ttmLDim = 32, mode = 0;
-  std::string tensorDims = "100,101,102", filename1, filename2, filename3;
+  std::string tensorDims = "100,101,102", filename1, filename2, filename3, resultname = "/home/zgh23/code/ctf/ttm.csv";
   for (int i = 1; i < argc; i++) {
 #define INT_ARG(argname, varname) do {      \
           if (!strcmp(argv[i], (argname))) {  \
@@ -101,6 +104,7 @@ int main(int argc, char** argv) {
     STRING_ARG("-tensor", filename1);
     STRING_ARG("-matrixC", filename2);
     STRING_ARG("-matrixA", filename3);
+    STRING_ARG("-result", resultname);
     INT_ARG("-mode", mode);
 #undef INT_ARG
 #undef STRING_ARG
@@ -119,7 +123,7 @@ int main(int argc, char** argv) {
   if (mode == 0) {
     ttm_check(nIter, warmup, dims, dw, ttmLDim, filename1, filename2, filename3);
   } else if (mode == 1) {
-    ttm_bench(nIter, warmup, dims, dw, ttmLDim, filename1, filename2, filename3);
+    ttm_bench(nIter, warmup, dims, dw, ttmLDim, filename1, filename2, filename3, resultname);
   } 
   MPI_Finalize();
   return retVal;
