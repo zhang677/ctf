@@ -8,6 +8,6 @@ it=20
 wp=5
 Bname="/scratch/zgh23/sparse_ten/$Tname-zero.tns"
 for L in ${Ls[@]}; do
-    Cname="/home/zgh23/code/ctf/C-$Tname-$L.txt"
-    mpirun -n 1 ./bin/myttm -tensor $Bname -dims $K,$I,$J -iter $it -warmup $wp -ttmLDim $L -mode 1 -matrixC $Cname
+    Cname="/home/zgh23/code/ctf/D-$Tname-4.txt"
+    mpirun -n 1 ./bin/myttm_il -tensor $Bname -dims $K,$I,$J -iter $it -warmup $wp -ttmLDim $L -mode 1 -matrixC $Cname
 done

@@ -78,8 +78,8 @@ void mttkrp_gen(int64_t nIter, int64_t warmup, std::vector<int64_t> dims, World&
   Tensor<double> D(2, true, dimD, dw, Ring<double>(), "D");
   // A.fill_sp_random(-1.,1.,sp_frac);
   std::cout << "Start generating B..." << std::endl;
-  B.fill_sp_random(-1.,1.,sp_frac);
-  // B.read_sparse_from_file(filename1.c_str());
+  // B.fill_sp_random(-1.,1.,sp_frac);
+  B.read_sparse_from_file(filename1.c_str());
   std::cout << "Finish generating B..." << std::endl;
   C.fill_sp_random(-1.,1.,sp_frac);
   D.fill_sp_random(-1.,1.,sp_frac);
