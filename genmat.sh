@@ -162,14 +162,106 @@
 #     sed -i '1i %%MatrixMarket matrix coordinate real general' $Dname
 # done
 
+# Bname=facebook
+# K=1504
+# L=42390
+# I=39986
+# Js=(4 8 16 32 64 128 256 512 1024 2048)
+# for J in ${Js[@]}; do
+#     Dname="/home/zgh23/code/ctf/D-$Bname-$J.mtx"
+#     Cname="/home/zgh23/code/ctf/C-$Bname-$J.mtx"
+#     mpirun -n 1 ./bin/mygenmat -K $K -L $L -J $J -matrixD $Dname -matrixC $Cname
+#     Dtxt="${Dname%.*}.txt"
+#     Ctxt="${Cname%.*}.txt"
+#     cp $Cname $Ctxt
+#     line_count=$(wc -l < $Cname)
+#     echo $line_count
+#     sed -i "1i $K $J $line_count" $Cname
+#     sed -i '1i %%MatrixMarket matrix coordinate real general' $Cname
+#     cp $Dname $Dtxt
+#     line_count=$(wc -l < $Dname)
+#     echo $line_count
+#     sed -i "1i $L $J $line_count" $Dname
+#     sed -i '1i %%MatrixMarket matrix coordinate real general' $Dname
+# done
+
 Bname=facebook
 K=1504
 L=42390
 I=39986
 Js=(4 8 16 32 64 128 256 512 1024 2048)
 for J in ${Js[@]}; do
-    Dname="/home/zgh23/code/ctf/D-$Bname-$J.mtx"
-    Cname="/home/zgh23/code/ctf/C-$Bname-$J.mtx"
+    Dname="/scratch/zgh23/sparse_ten/ctf_generated/001/D-$Bname-$J.mtx"
+    Cname="/scratch/zgh23/sparse_ten/ctf_generated/001/C-$Bname-$J.mtx"
+    mpirun -n 1 ./bin/mygenmat -K $K -L $L -J $J -matrixD $Dname -matrixC $Cname
+    Dtxt="${Dname%.*}.txt"
+    Ctxt="${Cname%.*}.txt"
+    cp $Cname $Ctxt
+    line_count=$(wc -l < $Cname)
+    echo $line_count
+    sed -i "1i $K $J $line_count" $Cname
+    sed -i '1i %%MatrixMarket matrix coordinate real general' $Cname
+    cp $Dname $Dtxt
+    line_count=$(wc -l < $Dname)
+    echo $line_count
+    sed -i "1i $L $J $line_count" $Dname
+    sed -i '1i %%MatrixMarket matrix coordinate real general' $Dname
+done
+
+Bname=nell-2
+K=12092
+L=9184
+I=28818
+Js=(4 8 16 32 64 128 256 512 1024 2048)
+for J in ${Js[@]}; do
+    Dname="/scratch/zgh23/sparse_ten/ctf_generated/001/D-$Bname-$J.mtx"
+    Cname="/scratch/zgh23/sparse_ten/ctf_generated/001/C-$Bname-$J.mtx"
+    mpirun -n 1 ./bin/mygenmat -K $K -L $L -J $J -matrixD $Dname -matrixC $Cname
+    Dtxt="${Dname%.*}.txt"
+    Ctxt="${Cname%.*}.txt"
+    cp $Cname $Ctxt
+    line_count=$(wc -l < $Cname)
+    echo $line_count
+    sed -i "1i $K $J $line_count" $Cname
+    sed -i '1i %%MatrixMarket matrix coordinate real general' $Cname
+    cp $Dname $Dtxt
+    line_count=$(wc -l < $Dname)
+    echo $line_count
+    sed -i "1i $L $J $line_count" $Dname
+    sed -i '1i %%MatrixMarket matrix coordinate real general' $Dname
+done
+
+Bname=nips3
+K=2482
+L=2862
+I=14036
+Js=(4 8 16 32 64 128 256 512 1024 2048)
+for J in ${Js[@]}; do
+    Dname="/scratch/zgh23/sparse_ten/ctf_generated/001/D-$Bname-$J.mtx"
+    Cname="/scratch/zgh23/sparse_ten/ctf_generated/001/C-$Bname-$J.mtx"
+    mpirun -n 1 ./bin/mygenmat -K $K -L $L -J $J -matrixD $Dname -matrixC $Cname
+    Dtxt="${Dname%.*}.txt"
+    Ctxt="${Cname%.*}.txt"
+    cp $Cname $Ctxt
+    line_count=$(wc -l < $Cname)
+    echo $line_count
+    sed -i "1i $K $J $line_count" $Cname
+    sed -i '1i %%MatrixMarket matrix coordinate real general' $Cname
+    cp $Dname $Dtxt
+    line_count=$(wc -l < $Dname)
+    echo $line_count
+    sed -i "1i $L $J $line_count" $Dname
+    sed -i '1i %%MatrixMarket matrix coordinate real general' $Dname
+done
+
+Bname=uber3
+K=182
+L=1139
+I=1716
+Js=(4 8 16 32 64 128 256 512 1024 2048)
+for J in ${Js[@]}; do
+    Dname="/scratch/zgh23/sparse_ten/ctf_generated/001/D-$Bname-$J.mtx"
+    Cname="/scratch/zgh23/sparse_ten/ctf_generated/001/C-$Bname-$J.mtx"
     mpirun -n 1 ./bin/mygenmat -K $K -L $L -J $J -matrixD $Dname -matrixC $Cname
     Dtxt="${Dname%.*}.txt"
     Ctxt="${Cname%.*}.txt"

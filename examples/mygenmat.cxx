@@ -5,7 +5,7 @@
 using namespace CTF;
 
 void gen_mat_mttkrp(int K, int L, int J, World& dw, std::string filename1, std::string filename2) {
-    double sp_frac = 0.1;
+    double sp_frac = 0.01;
     int dimC[2] = {K, J};
     int dimD[2] = {L, J};
     Tensor<double> C(2, true, dimC, dw, Ring<double>(), "C");
@@ -17,7 +17,7 @@ void gen_mat_mttkrp(int K, int L, int J, World& dw, std::string filename1, std::
 }
 
 void gen_mat_ttm(int K, int J, World& dw, std::string filename1) {
-    double sp_frac = 0.1;
+    double sp_frac = 0.01;
     int dimC[2] = {K, J};
     Tensor<double> C(2, true, dimC, dw, Ring<double>(), "C");
     C.fill_sp_random(-1.,1.,sp_frac);
